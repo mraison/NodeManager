@@ -1,4 +1,5 @@
-from NodeManager.chunker.model import Address, Device, AddressChunker, AddressChunk, DeviceChunkGroup
+from NodeManager.chunker.model import AddressChunker, AddressChunk, DeviceChunkGroups
+from NodeManager.model import Address, Device
 
 
 def get_dummy_input():
@@ -110,7 +111,7 @@ class TestAddressChunker:
             assert len(chunk.subscribers) == 0
 
 
-class TestDeviceChunkGroup:
+class TestDeviceChunkGroups:
     def test_create_device(self):
         d = Device(
             id=1,
@@ -124,11 +125,11 @@ class TestDeviceChunkGroup:
             ]
         )
 
-        dcg = DeviceChunkGroup(1)
+        dcg = DeviceChunkGroups(1)
         dcg.create_device(d)
-        chunks = dcg.get_chunk_group(1)
+        chunks = dcg.get_chunk_groups(1)
 
-        assert len(chunks.get_chunks()) == 1
+        assert len(chunks) == 1
 
     def test_delete_device(self):
         d = Device(
@@ -143,14 +144,14 @@ class TestDeviceChunkGroup:
             ]
         )
 
-        dcg = DeviceChunkGroup(1)
+        dcg = DeviceChunkGroups(1)
         dcg.create_device(d)
-        chunks = dcg.get_chunk_group(1)
+        chunks = dcg.get_chunk_groups(1)
 
-        assert len(chunks.get_chunks()) == 1
+        assert len(chunks) == 1
 
         dcg.delete_device(d)
-        assert dcg.get_chunk_group(1) is None
+        assert dcg.get_chunk_groups(1) is None
 
     def test_update_device(self):
         d = Device(
@@ -165,11 +166,11 @@ class TestDeviceChunkGroup:
             ]
         )
 
-        dcg = DeviceChunkGroup(1)
+        dcg = DeviceChunkGroups(1)
         dcg.create_device(d)
-        chunks = dcg.get_chunk_group(1)
+        chunks = dcg.get_chunk_groups(1)
 
-        assert len(chunks.get_chunks()) == 1
+        assert len(chunks) == 1
 
         d = Device(
             id=1,
@@ -184,7 +185,7 @@ class TestDeviceChunkGroup:
         )
         dcg.update_device(d)
 
-        assert dcg.get_chunk_group(1).get_chunks()[0].subscribers == Address(
+        assert dcg.get_chunk_groups(1)[0].subscribers == Address(
             id=2,
             name="janedoe",
             email="janedoe@dummy.com"
@@ -203,11 +204,11 @@ class TestDeviceChunkGroup:
             ]
         )
 
-        dcg = DeviceChunkGroup(1)
+        dcg = DeviceChunkGroups(1)
         dcg.create_device(d)
-        chunks = dcg.get_chunk_group(1)
+        chunks = dcg.get_chunk_groups(1)
 
-        assert len(chunks.get_chunks()) == 1
+        assert len(chunks) == 1
 
         d = Device(
             id=1,
@@ -222,7 +223,7 @@ class TestDeviceChunkGroup:
         )
         dcg.patch_device(d)
 
-        assert dcg.get_chunk_group(1).get_chunks()[0].subscribers == set([
+        assert dcg.get_chunk_groups(1)[0].subscribers == set([
             Address(
                 id=1,
                 name="John Doe",

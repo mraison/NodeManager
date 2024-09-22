@@ -1,29 +1,9 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from enum import Enum
 import heapq
 
-
-@dataclass
-class Address:
-    id: int
-    name: str
-    email: str
-
-    def __eq__(self, other):
-        return self.__key() == self.__key()
-
-    def __key(self):
-        return self.id, self.name, self.email
-
-    def __hash__(self):
-        return hash(self.__key())
-
-
-@dataclass
-class Device:
-    id: int
-    name: str
-    subscribers: list[Address]
+from NodeManager.model import Address, Device
 
 
 @dataclass
@@ -88,13 +68,17 @@ class AddressChunker:
             )
 
 
-class DeviceChunkGroup:
+class DeviceChunkGroups:
     def __init__(self, chunk_count):
         self._chunk_count = chunk_count
         self._data: dict[int, AddressChunker] = {}
 
-    def get_chunk_group(self, device_id: int) -> AddressChunker:
-        return self._data.get(device_id, None)
+    def get_chunk_groups(self, device_id: int) -> list[AddressChunk]:
+        device_chunker = self._data.get(device_id, None)
+        if device_chunker:
+            return device_chunker.get_chunks()
+        else:
+            return None
 
     def create_device(self, device: Device):
         if device.id not in self._data:
