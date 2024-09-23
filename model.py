@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import json
 
 from NodeManager.dao import DeviceDAO
 
@@ -18,6 +19,13 @@ class Address:
     def __hash__(self):
         return hash(self.__key())
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email
+        }
+
 
 @dataclass
 class Device:
@@ -25,11 +33,18 @@ class Device:
     name: str
     subscribers: list[Address]
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "subscribers": [add.to_dict() for add in self.subscribers]
+        }
+
 
 class DeviceCollection:
     def __init__(
         self,
-        dao: DeviceDAO
+        dao: DeviceDAO = DeviceDAO()
     ):
         self.data: list[Device] = []
 

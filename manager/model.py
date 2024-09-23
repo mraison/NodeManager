@@ -1,49 +1,23 @@
-import requests
-
-from NodeManager.chunker.model import DeviceChunkGroups
-from NodeManager.node.model import Node
-from NodeManager.model import Device, Address, DeviceCollection
+from NodeManager.manager.dao import NodeDAO
+from NodeManager.model import Device
 
 
-class Manager:
-    _config_uri = "/config"
-    _method = "POST"
+class Node:
+    def __init__(self, ip: str, port: str, dao: NodeDAO = None):
+        self.ip = ip
+        self.port = port
+        self._dao = dao or NodeDAO(f"http://{ip}:{port}/")
+        self._config: list[Device] = None
 
-    def __init__(self, nodes: list[Node], devices: DeviceCollection):
-        self._nodes = nodes
-        self._devices = devices
-        self._device_chunk_groups = DeviceChunkGroups(len(self._nodes))
+    def configure(self, devices: list[Device]):
+        self._config = devices
 
-    def load_devices(self):
-        self._devices.load_all()
-        for device in self._devices.data:
-            self._device_chunk_groups.create_device(device)
+        self._dao.post([
+            device.to_dict() for device in devices
+        ])
 
-    def configure_nodes(self):
-        configs = self._compose_node_configurations()
-        for i, node in enumerate(self._nodes):
-            node.configure(
-                configs[i]
-            )
+    def get_config(self):
+        return self._config
 
-    def _compose_node_configurations(self):
-        payloads = {}
-        for device in self._devices.data:
-
-            chunk_groups = self._device_chunk_groups.get_chunk_groups(device.id)
-            for i, chunk in enumerate(chunk_groups):
-                if i not in payloads:
-                    payloads[i] = []
-                payloads[i].append(
-                    Device(
-                        id=device.id,
-                        name=device.name,
-                        subscribers=chunk.subscribers
-                    )
-                )
-        return payloads
-
-
-
-
-
+    def load_config(self):
+        self._config = self._dao.get()
