@@ -1,7 +1,4 @@
 from dataclasses import dataclass
-import json
-
-from NodeManager.dao import DeviceDAO
 
 
 @dataclass
@@ -80,19 +77,3 @@ class DeviceCollection:
             Device.load_from_struct(sub_data) for sub_data in data
         ]
         return cls(devices)
-
-
-class ConfigModel:
-    def __init__(
-        self,
-        dao: DeviceDAO = DeviceDAO()
-    ):
-        self._config = DeviceCollection([])
-        self._dao = dao
-
-    def load_all(self):
-        payload = self._dao.get()
-        self._config = DeviceCollection.load_from_struct(payload)
-
-    def get(self):
-        return self._config
