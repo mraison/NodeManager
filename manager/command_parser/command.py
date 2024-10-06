@@ -1,7 +1,8 @@
+from NodeManager.manager.command_parser.option import FuncCommandOptionWrap
 
 
 class CommandLineBind:
-    def __init__(self, cmd_func_map: dict[str, callable]):
+    def __init__(self, cmd_func_map: dict[str, FuncCommandOptionWrap]):
         self._cmd_func_map = cmd_func_map
 
     def __call__(self, sub_cmd: str) -> callable:
@@ -10,31 +11,6 @@ class CommandLineBind:
             raise Exception(f"Invalid command: {sub_cmd}")
 
         return self._cmd_func_map[sub_cmd]
-
-
-# class CommandOption:
-#     def __init__(self, cast: callable):
-#         self._cast = cast
-#
-#     def __call__(self, val):
-#         try:
-#             return self._cast(val)
-#         except Exception as e:
-#             raise Exception(f"Invalid type error: {e}")
-#
-#
-# class CommandOptionCollection:
-#     def __init__(self, options: list[CommandOption]):
-#         self._options = options
-#
-#     def __call__(self, options: list[str]):
-#         cast_opts = []
-#         for i, option in enumerate(options):
-#             cast_opts.append(
-#                 self._options[i](option)
-#             )
-#
-#         return cast_opts
 
 
 class CommandLineChain:
