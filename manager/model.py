@@ -27,7 +27,7 @@ class Node:
 
     def configure(self, devices: DeviceCollection):
         self._config = devices
-        self._dao.post(devices.to_dict())
+        self._dao.post(devices.to_struct())
 
     def get_config(self):
         return self._config

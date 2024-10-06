@@ -66,7 +66,7 @@ class Device:
 class DeviceCollection:
     devices: list[Device]
 
-    def to_dict(self):
+    def to_struct(self):
         return [
             device.to_struct() for device in self.devices
         ]

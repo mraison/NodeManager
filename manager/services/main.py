@@ -3,20 +3,22 @@ import json
 import sys
 
 from NodeManager.manager.controller import NodeManager
-from NodeManager.manager.model import Node
+from NodeManager.manager.model import Node, CentralConfigModel
+from NodeManager.manager.services.model import ManagerConfigModel
 
-
-def load_config_from_file(config_file: Path):
-    if config_file.exists() and config_file.is_file():
-        return json.loads(
-            config_file.read_text()
-        )
-
-
-config = load_config_from_file(Path("~/node_man_conf.json"))
 
 option_map = {
-    'configure_nodes'
+    'node': [
+        'start',
+        'stop',
+        'add',
+        'remove',
+        'clear'
+    ],
+    'central_config': [
+        'pull',
+        'clear'
+    ]
 }
 
 
@@ -30,7 +32,8 @@ def run():
                 port=node["port"],
                 dao=None
             ) for node in config["nodes"]
-        ]
+        ],
+        config=CentralConfigModel()
     )
     if opt not in option_map:
         raise Exception('invalid option.')
