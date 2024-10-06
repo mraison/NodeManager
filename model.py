@@ -19,12 +19,23 @@ class Address:
     def __hash__(self):
         return hash(self.__key())
 
-    def to_dict(self):
+    def to_struct(self):
         return {
             "id": self.id,
             "name": self.name,
             "email": self.email
         }
+
+    @classmethod
+    def load_from_struct(cls, data: dict):
+        _id = data.get("id", -1)
+        name = data.get("name", "")
+        email = data.get("email", "")
+        if _id == -1 or name == "" or email == "":
+            raise Exception("Invalid data, cannot load.")
+        return cls(
+            _id, name, email
+        )
 
 
 @dataclass
@@ -33,41 +44,55 @@ class Device:
     name: str
     subscribers: list[Address]
 
-    def to_dict(self):
+    def to_struct(self):
         return {
             "id": self.id,
             "name": self.name,
-            "subscribers": [add.to_dict() for add in self.subscribers]
+            "subscribers": [add.to_struct() for add in self.subscribers]
         }
 
+    @classmethod
+    def load_from_struct(cls, data: dict):
+        _id = data.get("id", -1)
+        name = data.get("name", "")
+        subscribers = []
+        for add in data.get("subscribers", []):
+            subscribers.append(Address.load_from_struct(add))
+        if _id == -1 or name == "":
+            raise Exception("Invalid data, cannot load.")
+        return cls(
+            _id, name, subscribers
+        )
 
+
+@dataclass
 class DeviceCollection:
+    devices: list[Device]
+
+    def to_dict(self):
+        return [
+            device.to_struct() for device in self.devices
+        ]
+
+    @classmethod
+    def load_from_struct(cls, data: list):
+        devices = [
+            Device.load_from_struct(sub_data) for sub_data in data
+        ]
+        return cls(devices)
+
+
+class ConfigModel:
     def __init__(
         self,
         dao: DeviceDAO = DeviceDAO()
     ):
-        self.data: list[Device] = []
-
+        self._config = DeviceCollection([])
         self._dao = dao
 
     def load_all(self):
         payload = self._dao.get()
+        self._config = DeviceCollection.load_from_struct(payload)
 
-        self.data = []
-        for device in payload:
-            subscribers = []
-            for address in device.get('subscribers', []):
-                subscribers.append(
-                    Address(
-                        id=address['id'],
-                        name=address['name'],
-                        email=address['email']
-                    )
-                )
-            self.data.append(
-                Device(
-                    id=device['id'],
-                    name=device['name'],
-                    subscribers=subscribers
-                )
-            )
+    def get(self):
+        return self._config

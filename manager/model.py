@@ -1,5 +1,5 @@
 from NodeManager.manager.dao import NodeDAO
-from NodeManager.model import Device
+from NodeManager.model import DeviceCollection
 
 
 class Node:
@@ -7,17 +7,15 @@ class Node:
         self.ip = ip
         self.port = port
         self._dao = dao or NodeDAO(f"http://{ip}:{port}/")
-        self._config: list[Device] = None
+        self._config = DeviceCollection([])
 
-    def configure(self, devices: list[Device]):
+    def configure(self, devices: DeviceCollection):
         self._config = devices
-
-        self._dao.post([
-            device.to_dict() for device in devices
-        ])
+        self._dao.post(devices.to_dict())
 
     def get_config(self):
         return self._config
 
     def load_config(self):
-        self._config = self._dao.get()
+        payload = self._dao.get()
+        self._config = DeviceCollection.load_from_struct(payload)

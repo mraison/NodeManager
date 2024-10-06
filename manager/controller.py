@@ -1,40 +1,23 @@
-from NodeManager.chunker.model import DeviceChunkGroups
-from NodeManager.model import Device, DeviceCollection
+from NodeManager.model import ConfigModel
 from NodeManager.manager.model import Node
+from NodeManager.distributors.distributors import distribute_device_address_book
 
 
 class NodeManager:
-    def __init__(self, nodes: list[Node], devices: DeviceCollection):
+    def __init__(self, nodes: list[Node], config: ConfigModel):
         self.nodes = nodes
-        self.devices = devices
-        self.device_chunk_groups = DeviceChunkGroups(len(self.nodes))
+        self.central_config = config
+        self.node_configs = []
 
-    def load_devices(self):
-        self.devices.load_all()
-        self.device_chunk_groups = DeviceChunkGroups(len(self.nodes))
-        for device in self.devices.data:
-            self.device_chunk_groups.create_device(device)
+    def load_central_config(self):
+        self.central_config.load_all()
 
     def configure_nodes(self):
-        configs = self._compose_node_configurations()
+        node_configs = distribute_device_address_book(
+            self.central_config.get(),
+            len(self.nodes)
+        )
         for i, node in enumerate(self.nodes):
             node.configure(
-                configs[i]
+                node_configs[i]
             )
-
-    def _compose_node_configurations(self):
-        payloads = {}
-        for device in self.devices.data:
-
-            chunk_groups = self.device_chunk_groups.get_chunk_groups(device.id)
-            for i, chunk in enumerate(chunk_groups):
-                if i not in payloads:
-                    payloads[i] = []
-                payloads[i].append(
-                    Device(
-                        id=device.id,
-                        name=device.name,
-                        subscribers=chunk.subscribers
-                    )
-                )
-        return payloads
