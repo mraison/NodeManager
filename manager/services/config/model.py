@@ -1,7 +1,7 @@
 from pathlib import Path
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 
-from NodeManager.manager.services.utils import write_config_to_file, read_config_from_file
+from NodeManager.manager.services.config.dao import write_config_to_file, read_config_from_file
 from NodeManager.model import DeviceCollection
 
 
