@@ -38,11 +38,11 @@ class OptionCollection:
 
         return help_txt
 
-    def print_help(self):
+    def print_help(self, *args, **kwargs):
         print(self.get_help())
 
     def __call__(self, options: list[str] = []):
-        if 'help' in options:
+        if len(options) > 0 and 'help' == options[0]:
             return self.print_help
 
         cast_opts = []

@@ -7,7 +7,7 @@ from NodeManager.model import DeviceCollection
 
 @dataclass
 class Node:
-    id: int
+    id: str
     ip: str
     port: int
 
@@ -20,10 +20,10 @@ class Node:
 
     @classmethod
     def load_from_struct(cls, data: dict):
-        _id = data.get("id", -1)
+        _id = data.get("id", "")
         ip = data.get("ip", "")
         port = data.get("port", -1)
-        if ip == "" or port == -1 or _id == -1:
+        if ip == "" or port == -1 or _id == "":
             raise Exception("Invalid data, cannot load.")
 
         return cls(_id, ip, port)
@@ -46,6 +46,7 @@ class NodeCollection:
         return cls(nodes)
 
 
+@dataclass
 class _Config:
     nodes_collection: NodeCollection
     devices_collection: DeviceCollection
@@ -66,7 +67,10 @@ class _Config:
 
 class ManagerConfigModel:
     def __init__(self, config_file: Path):
-        self.config = {}
+        self.config = _Config(
+            nodes_collection=NodeCollection([]),
+            devices_collection=DeviceCollection([])
+        )
         self._config_file = config_file
 
     def load(self):
@@ -75,4 +79,4 @@ class ManagerConfigModel:
         )
 
     def save(self):
-        write_config_to_file(self.config, self._config_file)
+        write_config_to_file(self.config.to_struct(), self._config_file)

@@ -24,12 +24,13 @@ class FuncWrap:
         else:
             return f"{os.linesep}{indent}(func) {self._help}: {self._opts.get_help(layer + 1)}"
 
-    def print_help(self):
+    def print_help(self, *args, **kwargs):
         print(self.get_help())
 
     def __call__(self, cmd_line_args: list[str] = []):
-        if 'help' in cmd_line_args:
-            return self.print_help
+        if len(cmd_line_args) > 0 and 'help' == cmd_line_args[0]:
+            return self.print_help()
+
         return self._f(
             *self._opts(cmd_line_args)
         )

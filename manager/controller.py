@@ -1,9 +1,9 @@
-from NodeManager.manager.model import Node, CentralConfigModel
+from NodeManager.manager.model import NodeClient, CentralConfigModel
 from NodeManager.distributors.distributors import distribute_device_address_book
 
 
 class NodeManager:
-    def __init__(self, nodes: list[Node], config: CentralConfigModel):
+    def __init__(self, nodes: list[NodeClient], config: CentralConfigModel):
         self.nodes = nodes
         self.central_config = config
         self.node_configs = []

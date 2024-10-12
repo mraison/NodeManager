@@ -17,7 +17,7 @@ class CommandOptionBind:
 
         return help_txt
 
-    def print_help(self):
+    def print_help(self, *args, **kwargs):
         print(self.get_help())
 
     def __call__(self, sub_cmd: str) -> callable:
@@ -42,8 +42,8 @@ class CommandChain:
         print(self.get_help())
 
     def __call__(self, full_cmd: list[str]):
-        if 'help' in full_cmd:
-            return self.print_help
+        if len(full_cmd) > 0 and 'help' == full_cmd[0]:
+            return self.print_help()
 
         f = self._cmd_bind
         end_index = 0
@@ -56,7 +56,6 @@ class CommandChain:
                 break
 
         remaining_args = full_cmd[end_index:] if end_index < len(full_cmd) else []
-
-        return f(*remaining_args)
+        return f(remaining_args)
 
 

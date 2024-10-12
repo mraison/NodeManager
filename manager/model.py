@@ -18,7 +18,7 @@ class CentralConfigModel:
         return self._config
 
 
-class Node:
+class NodeClient:
     def __init__(self, ip: str, port: str, dao: NodeDAO = None):
         self.ip = ip
         self.port = port
