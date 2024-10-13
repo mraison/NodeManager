@@ -1,6 +1,6 @@
 import os
 
-from NodeManager.manager.services.command_parser.protocol import ParserType
+from NodeManager.manager.command_parser.protocol import ParserType
 
 
 class CommandOptionBind:

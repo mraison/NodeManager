@@ -1,6 +1,7 @@
 from .distributors import distribute_device_address_book
 from NodeManager.model import DeviceCollection
 
+
 def get_dummy_devices_config():
     return [
         {

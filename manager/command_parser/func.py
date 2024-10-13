@@ -1,6 +1,6 @@
 import os
 
-from NodeManager.manager.services.command_parser.option import OptionCollection
+from NodeManager.manager.command_parser.option import OptionCollection
 
 
 class FuncWrap:

@@ -1,6 +1,6 @@
-from NodeManager.manager.services.command_parser.command import CommandOptionBind, CommandChain
-from NodeManager.manager.services.command_parser.option import Option, OptionCollection
-from NodeManager.manager.services.command_parser.func import FuncWrap
+from NodeManager.manager.command_parser.command import CommandOptionBind, CommandChain
+from NodeManager.manager.command_parser.option import Option, OptionCollection
+from NodeManager.manager.command_parser.func import FuncWrap
 
 
 def func1():

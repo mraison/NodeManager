@@ -7,7 +7,7 @@ global c
 c = {}
 
 
-@app.route("/config", methods = ['GET', 'POST'])
+@app.route("/config", methods=['GET', 'POST'])
 def config():
     global c
     if request.method == 'POST':
