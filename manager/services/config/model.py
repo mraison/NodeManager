@@ -47,21 +47,42 @@ class NodeCollection:
 
 
 @dataclass
+class DeviceConfig:
+    source: str
+    devices: DeviceCollection
+
+    def to_struct(self):
+        return {
+            'source': self.source,
+            'devices': self.devices.to_struct()
+        }
+
+    @classmethod
+    def load_from_struct(cls, data: dict):
+        source = data.get("source", "")
+        devices = DeviceCollection.load_from_struct(data.get("devices", []))
+        # if source == "":
+        #     raise Exception("Invalid data, cannot load.")
+
+        return cls(source, devices)
+
+
+@dataclass
 class _Config:
     nodes_collection: NodeCollection
-    devices_collection: DeviceCollection
+    device_config: DeviceConfig
 
     def to_struct(self):
         return {
             'nodes_collection': self.nodes_collection.to_struct(),
-            'devices_collection': self.devices_collection.to_struct()
+            'device_config': self.device_config.to_struct()
         }
 
     @classmethod
     def load_from_struct(cls, data: dict):
         return cls(
             NodeCollection.load_from_struct(data.get('nodes_collection', [])),
-            DeviceCollection.load_from_struct(data.get('devices_collection', []))
+            DeviceConfig.load_from_struct(data.get('device_config', {}))
         )
 
 
@@ -69,7 +90,7 @@ class ManagerConfigModel:
     def __init__(self, config_file: Path):
         self.config = _Config(
             nodes_collection=NodeCollection([]),
-            devices_collection=DeviceCollection([])
+            device_config=DeviceConfig("", DeviceCollection([]))
         )
         self._config_file = config_file
 

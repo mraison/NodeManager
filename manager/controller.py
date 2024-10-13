@@ -1,19 +1,19 @@
-from NodeManager.manager.model import NodeClient, CentralConfigModel
+from NodeManager.manager.client import NodeClient, DevicesClient
 from NodeManager.distributors.distributors import distribute_device_address_book
 
 
 class NodeManager:
-    def __init__(self, nodes: list[NodeClient], config: CentralConfigModel):
+    def __init__(self, nodes: list[NodeClient], devices: DevicesClient):
         self.nodes = nodes
-        self.central_config = config
+        self.devices_config = devices
         self.node_configs = []
 
     def load_central_config(self):
-        self.central_config.load_all()
+        self.devices_config.load_config()
 
     def configure_nodes(self):
         node_configs = distribute_device_address_book(
-            self.central_config.get(),
+            self.devices_config.get_config(),
             len(self.nodes)
         )
         for i, node in enumerate(self.nodes):

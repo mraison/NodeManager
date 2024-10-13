@@ -1,5 +1,4 @@
 import sys
-import uuid
 from pathlib import Path
 
 from NodeManager.manager.services.config.model import Node
@@ -8,6 +7,8 @@ from NodeManager.manager.services.command_parser.func import FuncWrap
 from NodeManager.manager.services.command_parser.option import Option, OptionCollection
 from NodeManager.manager.services.config.model import ManagerConfigModel
 from NodeManager.manager.services.utils import generate_unique_string
+from NodeManager.manager.client import DevicesClient
+from NodeManager.manager.dao import DevicesDAO
 
 
 config_file = Path("./config.json")
@@ -57,9 +58,63 @@ def remove_node(_id: str):
     config_container.save()
 
 
+def list_device_config():
+    print(
+        config_container.config.device_config.to_struct()
+    )
+
+
+def set_device_config_source(source: str):
+    config_container.config.device_config.source = source
+    config_container.save()
+
+
+def get_device_config_source():
+    print(
+        config_container.config.device_config.source
+    )
+
+
+def pull_device_config():
+    cli = DevicesClient(
+        devices=config_container.config.device_config.devices,
+        dao=DevicesDAO(
+            url=config_container.config.device_config.source
+        )
+    )
+    cli.load_config()
+    config_container.config.device_config.devices = cli.get_config()
+    config_container.save()
+
+
 service_command_map = CommandChain(
     CommandOptionBind(
         {
+            'device': CommandOptionBind(
+                {
+                    'pull': FuncWrap(
+                        f=pull_device_config,
+                        help_txt="Pull device config from upstream"
+                    ),
+                    'list': FuncWrap(
+                        f=list_device_config,
+                        help_txt="Show current device config"
+                    ),
+                    'source': FuncWrap(
+                        f=set_device_config_source,
+                        help_txt="Set device config source",
+                        options=OptionCollection(
+                            [
+                                Option(str, help_txt="source must be a string."),
+                            ]
+                        ),
+                    ),
+                    'list-source': FuncWrap(
+                        f=get_device_config_source,
+                        help_txt="Pull device config from upstream"
+                    ),
+                }
+            ),
             'node': CommandOptionBind(
                 {
                     # 'start': FuncWrap(

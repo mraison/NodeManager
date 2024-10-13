@@ -1,7 +1,7 @@
 from unittest.mock import patch, MagicMock
 
 from NodeManager.model import DeviceCollection
-from NodeManager.manager.model import NodeClient, CentralConfigModel
+from NodeManager.manager.client import NodeClient, DevicesClient
 from NodeManager.manager.controller import NodeManager
 
 
@@ -46,12 +46,12 @@ class TestManager:
 
         m = NodeManager(
             [NodeClient('0.0.0.0', '1234', mock_node_dao)],
-            CentralConfigModel(mock_devices_dao)
+            DevicesClient(dao=mock_devices_dao)
         )
-        assert m.central_config.get().devices == []
+        assert m.devices_config.get_config().devices == []
         m.load_central_config()
         expected_config = DeviceCollection.load_from_struct(get_dummy_devices_config())
-        assert m.central_config.get() == expected_config
+        assert m.devices_config.get_config() == expected_config
 
     @patch('NodeManager.manager.dao.NodeDAO')
     @patch('NodeManager.manager.dao.CentralConfigDAO')
@@ -62,9 +62,9 @@ class TestManager:
 
         m = NodeManager(
             [NodeClient('0.0.0.0', '1234', mock_node_dao)],
-            CentralConfigModel(mock_devices_dao)
+            DevicesClient(dao=mock_devices_dao)
         )
-        assert m.central_config.get().devices == []
+        assert m.devices_config.get_config().devices == []
         m.load_central_config()
         m.configure_nodes()
 

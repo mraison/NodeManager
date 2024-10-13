@@ -1,21 +1,22 @@
-from NodeManager.manager.dao import NodeDAO, CentralConfigDAO
+from NodeManager.manager.dao import NodeDAO, DevicesDAO
 from NodeManager.model import DeviceCollection
 
 
-class CentralConfigModel:
+class DevicesClient:
     def __init__(
         self,
-        dao: CentralConfigDAO = CentralConfigDAO()
+        devices: DeviceCollection = DeviceCollection([]),
+        dao: DevicesDAO = DevicesDAO()
     ):
-        self._config = DeviceCollection([])
+        self._devices = devices
         self._dao = dao
 
-    def load_all(self):
+    def load_config(self):
         payload = self._dao.get()
-        self._config = DeviceCollection.load_from_struct(payload)
+        self._devices = DeviceCollection.load_from_struct(payload)
 
-    def get(self):
-        return self._config
+    def get_config(self):
+        return self._devices
 
 
 class NodeClient:

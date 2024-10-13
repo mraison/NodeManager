@@ -12,7 +12,6 @@ def read_config_from_file(config_file: Path):
 
 
 def write_config_to_file(config: dict, file: Path):
-    print(config)
     file.write_text(
         json.dumps(
             config

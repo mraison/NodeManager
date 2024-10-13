@@ -1,7 +1,7 @@
 import requests
 
 
-class CentralConfigDAO:
+class DevicesDAO:
     def __init__(self, url: str = 'http://127.0.0.1:8000/data/device/'):
         self._url = url
 
