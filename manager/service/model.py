@@ -12,6 +12,10 @@ class Service:
         self._conf.load()
 
     def reset(self):
+        # shut down each node.
+        for node in self._conf.node_configs.nodes:
+            self.remove_node(node.id)
+
         self._conf.empty()
         self._conf.save()
 
