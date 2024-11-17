@@ -3,7 +3,7 @@ from pathlib import Path
 from NodeManager.manager.config.model import Config
 from NodeManager.manager.service.client import DevicesClient, NodeClient
 from NodeManager.manager.distributors.distributors import distribute_device_address_book
-from NodeManager.manager.service.utils import _start_node, _stop_node
+from NodeManager.manager.service.utils import _start_node, _stop_node, StopNodeException
 
 
 class Service:
@@ -39,11 +39,13 @@ class Service:
     def remove_node(self, _id: str):
         try:
             node = self._conf.node_configs.remove(_id)
+        except StopNodeException as e:
+            print(f"Failed node stop: {e}")
         except Exception:
             print(f"node {_id} not found.")
             return
 
-        _stop_node(int(node.id))
+        _stop_node(int(node.id), node.port)
         self._conf.save()
 
     def print_device_config(self):
