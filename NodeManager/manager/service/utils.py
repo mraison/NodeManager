@@ -24,9 +24,10 @@ def generate_unique_string(length=8):
 
 def _start_node():
     port = random.randint(5000, 5050)
-    log = open(f'{port}.log', 'a')
+    log_dir = pathlib.Path(os.environ.get('NODE_MANAGER_DIR', './'))
+    log = open(log_dir / f'{port}.log', 'a')
     proc = subprocess.Popen(
-        ['flask', '--app', str(NODE_DIR / 'app.py'), 'run', '--port', str(port)],
+        ['python', '-m', 'NodeManager.node', str(port)],
         stdout=log,
         stderr=log
     )
@@ -59,5 +60,6 @@ def _stop_node(pid: int, port: int = 0, timeout: float = 5.0, remove_log: bool =
             time.sleep(0.1)
 
     if remove_log:
-        log_f = pathlib.Path(f'{port}.log')
+        log_dir = pathlib.Path(os.environ.get('NODE_MANAGER_DIR', './'))
+        log_f = log_dir / f'{port}.log'
         log_f.unlink()

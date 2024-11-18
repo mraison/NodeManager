@@ -1,15 +1,17 @@
+import os
 import sys
 from pathlib import Path
 
-from NodeManager.manager.command_parser.command import CommandChain, CommandOptionBind
-from NodeManager.manager.command_parser.func import FuncWrap
-from NodeManager.manager.command_parser.option import Option, OptionCollection
+from CmdCom.command import CommandChain, CommandOptionBind
+from CmdCom.func import FuncWrap
+from CmdCom.option import Option, OptionCollection
 from NodeManager.manager.service.model import Service
 
 
-config_path = Path(__file__)
+config_dir = Path(os.environ.get('NODE_MANAGER_DIR', './'))
+config_dir.mkdir(parents=True, exist_ok=True)
 service = Service(
-    config_path.parent / "config.json"
+    config_dir / "config.json"
 )
 
 service_command_map = CommandChain(

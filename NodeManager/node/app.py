@@ -34,4 +34,3 @@ def config():
         return Response(None, status=200)
     if request.method == 'GET':
         return c.to_struct()
-
