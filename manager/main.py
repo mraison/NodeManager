@@ -7,10 +7,10 @@ from NodeManager.manager.command_parser.option import Option, OptionCollection
 from NodeManager.manager.service.model import Service
 
 
+config_path = Path(__file__)
 service = Service(
-    Path("./config.json")
+    config_path.parent / "config.json"
 )
-
 
 service_command_map = CommandChain(
     CommandOptionBind(

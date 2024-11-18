@@ -1,9 +1,11 @@
+import os
 from flask import Flask, request, Response
 
 from NodeManager.manager.main import service_command_map, service
 
 app = Flask(__name__)
 
+node_web = os.environ.get('NODE_WEB', 'http://127.0.0.1:8000/data/device')
 
 @app.route("/config", methods=['GET', 'POST'])
 def config():
@@ -22,7 +24,7 @@ def config():
         # set device source
         service_command_map(
             [
-                'device', 'source', 'http://127.0.0.1:8000/data/device'
+                'device', 'source', node_web
             ]
         )
         # pull configuration

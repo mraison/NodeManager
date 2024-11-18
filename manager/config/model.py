@@ -95,6 +95,7 @@ class Config:
     def __init__(self, config_file: Path, cli: LocalConfigClient = None):
         self._file = config_file
         self._cli = cli or LocalConfigClient(self._file)
+        self._cli.ensure()
 
         self.node_configs = _NodeConfigCollection([])
         self.device_configs = _DevicesConfigCollection(

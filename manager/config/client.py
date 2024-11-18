@@ -12,6 +12,9 @@ class LocalConfigClient:
     ):
         self._dao = dao or FileDao(file)
 
+    def ensure(self):
+        self._dao.ensure()
+
     def read_config(self):
         payload = self._dao.read_from_file()
         return json.loads(
