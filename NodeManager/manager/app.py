@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, Response
 
-from NodeManager.manager.main import service_command_map, service
+from NodeManager.manager.__main__ import service_command_map, service
 
 app = Flask(__name__)
 
@@ -55,3 +55,5 @@ def config():
         }
 
 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8888)
